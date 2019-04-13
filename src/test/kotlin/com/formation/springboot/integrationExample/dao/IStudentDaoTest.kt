@@ -30,7 +30,7 @@ class IStudentDaoTest {
 
     @DisplayName("Save student in DB should return the right one")
     @Test
-    fun saveStudent() {
+    fun testSaveStudent() {
         val result = dao.save(hardcodedStudent)
         Assertions.assertEquals(hardcodedStudent.id, result.id)
         Assertions.assertEquals(hardcodedStudent.name, result.name)
@@ -39,7 +39,7 @@ class IStudentDaoTest {
 
     @DisplayName("Update student in DB should return the right one")
     @Test
-    fun updateStudent() {
+    fun testUpdateStudent() {
         val updatedStudent = Student(hardcodedStudent.id, name = "Tommy", nationality = "British")
         val result = dao.save(updatedStudent)
         Assertions.assertEquals(updatedStudent.id, result.id)
@@ -50,7 +50,7 @@ class IStudentDaoTest {
     @DisplayName("Retrieve a student in DB should return the right one")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "Exception")
-    fun retrieveStudent(case: String) {
+    fun testRetrieveStudent(case: String) {
         when (case) {
             "OK" -> {
                 val result = dao.findById(hardcodedStudent.id)
@@ -68,7 +68,7 @@ class IStudentDaoTest {
     @DisplayName("Retrieve a student in DB should return the right one")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "null")
-    fun retrieveStudentByName(case: String) {
+    fun testRetrieveStudentByName(case: String) {
         when (case) {
             "OK" -> {
                 val result = dao.findByName("Tom")
@@ -83,7 +83,7 @@ class IStudentDaoTest {
     @DisplayName("Retrieve all student in DB should return the all the students")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "null")
-    fun retrieveAllStudents(case: String) {
+    fun testRetrieveAllStudents(case: String) {
         when (case) {
             "OK" -> {
                 val newStudent = Student(id = 0, name = "Tommy", nationality = "British")
@@ -103,5 +103,24 @@ class IStudentDaoTest {
                 Assertions.assertEquals(0, result.size)
             }
         }
+    }
+
+    @DisplayName("Delete a student by his id should erase him from DB")
+    @Test
+    fun testDeleteStudentById() {
+        dao.deleteById(hardcodedStudent.id)
+        val result = dao.findById(hardcodedStudent.id)
+        val exception = Assertions.assertThrows(NoSuchElementException::class.java) {result.get()}
+        Assertions.assertTrue(exception.message!!.contains("No value present"))
+    }
+
+    @DisplayName("Delete all students should erase all from DB")
+    @Test
+    fun testDeleteAllStudents() {
+        val newStudent = Student(name = "Tommy", nationality = "British")
+        dao.save(newStudent)
+        dao.deleteAll()
+        val result = dao.findAll()
+        Assertions.assertEquals(0, result.size)
     }
 }
