@@ -47,10 +47,10 @@ class IStudentDaoTest {
         Assertions.assertEquals(updatedStudent.nationality, result.nationality)
     }
 
-    @DisplayName("Retrieve a student in DB should return the right one")
+    @DisplayName("Retrieve a student in DB should return the right one or throws an exception when getting the result")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "Exception")
-    fun testRetrieveStudent(case: String) {
+    fun testRetrieveStudentById(case: String) {
         when (case) {
             "OK" -> {
                 val result = dao.findById(hardcodedStudent.id)
@@ -65,7 +65,7 @@ class IStudentDaoTest {
         }
     }
 
-    @DisplayName("Retrieve a student in DB should return the right one")
+    @DisplayName("Retrieve a student in DB should return the right one or null if no student is found")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "null")
     fun testRetrieveStudentByName(case: String) {
@@ -80,7 +80,7 @@ class IStudentDaoTest {
         }
     }
 
-    @DisplayName("Retrieve all student in DB should return the all the students")
+    @DisplayName("Retrieve all student in DB should return a list of all students or an empty list if none is found")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "null")
     fun testRetrieveAllStudents(case: String) {
