@@ -31,27 +31,27 @@ class StudentServiceTest {
         hardcodedStudent = Student(name = "Tom", nationality = "American")
     }
 
-    @DisplayName("Save student when calling DAO should return the right one")
+    @DisplayName("Save student when calling DAO should return the right one, if failed throws exception")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "exception")
     fun testSaveStudent(case: String) {
         when (case) {
             "OK" -> {
                 Mockito.doReturn(hardcodedStudent).`when`(dao).save(hardcodedStudent)
-                val result = studentService.saveStudent(hardcodedStudent)
+                val result = studentService.createStudent(hardcodedStudent)
                 Assertions.assertEquals(hardcodedStudent.id, result.id)
                 Assertions.assertEquals(hardcodedStudent.name, result.name)
                 Assertions.assertEquals(hardcodedStudent.nationality, result.nationality)
             }
             "exception" -> {
                 Mockito.doThrow(RuntimeException::class.java).`when`(dao).save(hardcodedStudent)
-                val exception = Assertions.assertThrows(RuntimeException::class.java) {studentService.saveStudent(hardcodedStudent)}
+                val exception = Assertions.assertThrows(RuntimeException::class.java) {studentService.createStudent(hardcodedStudent)}
                 Assertions.assertTrue(exception.message!!.contains("Failed to save student when calling DAO"))
             }
         }
     }
 
-    @DisplayName("Update student when calling DAO should return the right one")
+    @DisplayName("Update student when calling DAO should return the right one, if failed throws exception")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "exception")
     fun testUpdateStudent(case: String) {
@@ -151,7 +151,7 @@ class StudentServiceTest {
         }
     }
 
-    @DisplayName("Delete a student by his id when calling DAO should erase him from DB")
+    @DisplayName("Delete a student by his id when calling DAO should erase him from DB, if failed throws exception")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "exception")
     fun testDeleteStudentById(case: String) {
@@ -164,7 +164,7 @@ class StudentServiceTest {
         }
     }
 
-    @DisplayName("Delete all students when calling DAO should erase all from DB")
+    @DisplayName("Delete all students when calling DAO should erase all from DB, if failed throws exception")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "exception")
     fun testDeleteAllStudents(case: String) {

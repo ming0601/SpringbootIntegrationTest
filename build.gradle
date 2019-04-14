@@ -37,9 +37,7 @@ dependencies {
 
 test {
 	// Enabling JUnit Platform (a.k.a. JUnit 5) support
-	useJUnitPlatform {
-		includeEngines 'junit-jupiter', 'junit-vintage'
-	}
+	useJUnitPlatform ()
 }
 
 compileKotlin {

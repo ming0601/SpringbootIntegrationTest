@@ -8,11 +8,9 @@ import java.lang.Exception
 import java.lang.RuntimeException
 
 @Service
-class StudentService {
-    @Autowired
-    lateinit var dao: IStudentDao
+class StudentService @Autowired constructor(val dao: IStudentDao) {
 
-    fun saveStudent(student: Student): Student {
+    fun createStudent(student: Student): Student {
         return try {
             dao.save(student)
         } catch (e: Exception) {
