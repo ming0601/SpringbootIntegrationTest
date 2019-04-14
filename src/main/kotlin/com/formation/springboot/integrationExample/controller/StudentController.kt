@@ -3,13 +3,14 @@ package com.formation.springboot.integrationExample.controller
 import com.formation.springboot.integrationExample.model.Student
 import com.formation.springboot.integrationExample.service.StudentService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.lang.RuntimeException
 
 @RestController
-@RequestMapping("/formation/integration")
+@RequestMapping("/formation/integration", consumes = ["application/json"], produces = ["application/json"])
 class StudentController @Autowired constructor(val studentService: StudentService) {
 
     @PostMapping("/students")
@@ -23,7 +24,7 @@ class StudentController @Autowired constructor(val studentService: StudentServic
         }
     }
 
-    @PatchMapping("/students/{id}")
+    @PutMapping("/students/{id}")
     fun updateStudent(
             @PathVariable id: Long,
             @RequestBody student: Student): ResponseEntity<Unit> {
