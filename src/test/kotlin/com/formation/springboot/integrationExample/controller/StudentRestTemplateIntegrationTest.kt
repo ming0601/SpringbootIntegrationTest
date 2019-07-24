@@ -12,7 +12,6 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.*
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URI
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -28,7 +27,7 @@ class StudentRestTemplateIntegrationTest {
     @Throws(Exception::class)
     fun testCreateStudent() {
         headers.contentType = MediaType.APPLICATION_JSON_UTF8
-        val entity = HttpEntity<Student>(Student(id = 1, name = "Tom", nationality = "American"), headers)
+        val entity = HttpEntity(Student(id = 1, name = "Tom", nationality = "American"), headers)
         val response: ResponseEntity<String> = testRestTemplate.exchange(createURLWithPort("/formation/integration/students"), HttpMethod.POST, entity, String::class)
         val actualURL = response.headers[HttpHeaders.LOCATION]!![0]
         Assertions.assertTrue(actualURL.contains("/formation/integration/students"))
@@ -39,10 +38,10 @@ class StudentRestTemplateIntegrationTest {
     @Throws(Exception::class)
     fun testUpdateStudent() {
         headers.contentType = MediaType.APPLICATION_JSON_UTF8
-        val entity = HttpEntity<Student>(Student(id = 1, name = "Tommy", nationality = "British"), headers)
-        val response: ResponseEntity<String> = testRestTemplate.exchange(createURLWithPort("/formation/integration/students/1"), HttpMethod.PUT, entity, String::class)
+        val entity = HttpEntity(Student(id = 1, name = "Tommy", nationality = "British"), headers)
+        val response: ResponseEntity<String> = testRestTemplate.exchange(createURLWithPort("/formation/integration/student/update/1"), HttpMethod.PUT, entity, String::class)
         val actualURL = response.headers[HttpHeaders.LOCATION]!![0]
-        Assertions.assertTrue(actualURL.contains("/formation/integration/students/1"))
+        Assertions.assertTrue(actualURL.contains("/formation/integration/student/update/1"))
     }
 
     @Test

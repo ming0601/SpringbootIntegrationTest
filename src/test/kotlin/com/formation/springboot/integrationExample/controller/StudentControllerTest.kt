@@ -7,14 +7,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.util.*
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -124,7 +125,7 @@ class StudentControllerTest {
     @DisplayName("Retrieve all student when calling StudentService should return a list of all students or an empty list if none is found")
     @ParameterizedTest(name = "Case {index}: Testing {0}")
     @CsvSource("OK", "noData", "exception")
-    fun testRetrieveAllStudents(case: String) {
+    fun testRetrieveAllStudents_WithCsvSource(case: String) {
         when (case) {
             "OK" -> {
                 val newStudent = Student(id = 20, name = "Tommy", nationality = "British")
@@ -135,6 +136,35 @@ class StudentControllerTest {
                 Assertions.assertEquals(hardcodedStudent.nationality, result[0]!!.nationality)
 
                 Assertions.assertEquals(newStudent.id, result[1]!!.id)
+                Assertions.assertEquals(newStudent.name, result[1]!!.name)
+                Assertions.assertEquals(newStudent.nationality, result[1]!!.nationality)
+            }
+            "noData" -> {
+                Mockito.doReturn(listOf<Student>()).`when`(studentService).findAllStudents()
+                val result = studentController.findAllStudents()
+                Assertions.assertEquals(0, result.size)
+            }
+            "exception" -> {
+                Mockito.doThrow(RuntimeException::class.java).`when`(studentService).findAllStudents()
+                val exception = Assertions.assertThrows(RuntimeException::class.java) {studentController.findAllStudents()}
+                Assertions.assertTrue(exception.message!!.contains("Failed to find all students when calling StudentService"))
+            }
+        }
+    }
+
+    @DisplayName("Retrieve all student when calling StudentService should return a list of all students or an empty list if none is found")
+    @ParameterizedTest(name = "Case {index}: Testing {0}")
+    @MethodSource("testRetrieveAllStudentsDataSource")
+    fun testRetrieveAllStudents_WithMethodSource(case: String, newStudent: Student?) {
+        when (case) {
+            "OK" -> {
+                Mockito.doReturn(listOf(hardcodedStudent, newStudent)).`when`(studentService).findAllStudents()
+                val result = studentController.findAllStudents()
+                Assertions.assertEquals(hardcodedStudent.id, result[0]!!.id)
+                Assertions.assertEquals(hardcodedStudent.name, result[0]!!.name)
+                Assertions.assertEquals(hardcodedStudent.nationality, result[0]!!.nationality)
+
+                Assertions.assertEquals(newStudent!!.id, result[1]!!.id)
                 Assertions.assertEquals(newStudent.name, result[1]!!.name)
                 Assertions.assertEquals(newStudent.nationality, result[1]!!.nationality)
             }
@@ -189,5 +219,22 @@ class StudentControllerTest {
                 Assertions.assertEquals(400, result.statusCodeValue)
             }
         }
+    }
+
+    companion object {
+
+        @JvmStatic
+        @Suppress("unused")
+        fun testRetrieveAllStudentsDataSource() = listOf(
+                Arguments.of(
+                        "OK", Student(id = 20, name = "Tommy", nationality = "British")
+                ),
+                Arguments.of(
+                        "noData", null
+                ),
+                Arguments.of(
+                        "exception", null
+                )
+        )
     }
 }

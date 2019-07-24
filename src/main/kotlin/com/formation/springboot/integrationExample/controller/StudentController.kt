@@ -24,7 +24,7 @@ class StudentController @Autowired constructor(val studentService: StudentServic
         }
     }
 
-    @PutMapping("/students/{id}")
+    @PutMapping("/student/update/{id}")
     fun updateStudent(
             @PathVariable id: Long,
             @RequestBody student: Student): ResponseEntity<Unit> {
